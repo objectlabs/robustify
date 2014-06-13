@@ -1184,9 +1184,15 @@ def raise_or_return(result):
 def idle_messenger(what="the desired condition to obtain", logger=None):
     """ :return a nice thunk for passing as on_wait / do_between_attempts """
     the_logger = logger_for_sure(logger)
+    pyclosure = { "t0" : None }
 
     def your_call_is_important_to_us():
-        the_logger.info("Waiting for %s..." % what)
+        if pyclosure['t0']:
+            how_long = " (%.0f secs now)" % (now() - pyclosure['t0'])
+        else:
+            pyclosure['t0'] = now()
+            how_long = ""
+        the_logger.info("Waiting for %s%s..." % (what, how_long))
 
     return your_call_is_important_to_us
 
